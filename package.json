@@ -1,0 +1,34 @@
+{
+  "name": "encog",
+  "version": "0.3.0",
+  "description": "ENCOG – support tool for interpreting and following WISC-IV index scores in children after encephalitis. Bilingual (Vietnamese/English), React + TypeScript, runs entirely in the browser.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "author": "Vương Hà Bảo Châu",
+  "keywords": ["encephalitis", "children", "WISC-IV", "follow-up", "react", "typescript"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test \"tests/*.test.ts\"",
+    "synthetic": "tsx scripts/make-synthetic.ts"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.10",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "4.3.4",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3",
+    "vite": "5.4.11"
+  }
+}
