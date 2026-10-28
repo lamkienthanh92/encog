@@ -31,10 +31,11 @@ test('date order errors', () => {
   assert.ok(t.errors.some((e) => e.code === 'assessmentBeforeDischarge'));
 });
 
-test('re-assessment anchored at 18 months after discharge when the summary is below 80', () => {
+test('re-assessment at the 18-month default visit when it is at least 12 months after the test', () => {
   const a = analyzeScores({ VCI: 72, PRI: 75, WMI: 70, PSI: 78, FSIQ: 71 });
-  const t = timingChecks({ discharge: '2025-03-01', assessment: '2025-10-01' }, a);
+  const t = timingChecks({ discharge: '2025-03-01', assessment: '2025-09-01' }, a);
   assert.equal(toISO(t.nextDue), '2026-09-01');
+  assert.equal(toISO(timingChecks({ discharge: '2025-03-01', assessment: '2025-10-01' }, a).nextDue), '2026-10-01');
   assert.equal(t.recheckReason, 'lowSummary');
 });
 

@@ -33,9 +33,12 @@ export function scoreError(value: number | null, required = true): ScoreError | 
 
 /**
  * Which summary index is interpretable (Flanagan & Kaufman 2009; Weiss et al. 2006):
- * spread < T → FSIQ; else |VCI−PRI| < T → GAI; else |WMI−PSI| < T → CPI; else NONE.
+ * spread < T → FSIQ; else |VCI−PRI| < T → GAI; else NONE (interpret the four-index profile).
+ * Since 0.4.0 the CPI is NOT used as a substitute estimate of general ability by default, because it
+ * reflects working memory and processing speed only. `allowCpiSummary = true` reproduces the
+ * local practice used up to 0.3.0 (|WMI−PSI| < T → CPI) for retrospective comparison only.
  */
-export function selectSummaryIndex(index: Record<IndexKey, number>, threshold: number = DEFAULT_THRESHOLD): Selection {
+export function selectSummaryIndex(index: Record<IndexKey, number>, threshold: number = DEFAULT_THRESHOLD, allowCpiSummary = false): Selection {
   const vals = INDEXES.map((k) => index[k]);
   const max = Math.max(...vals);
   const min = Math.min(...vals);
@@ -43,14 +46,14 @@ export function selectSummaryIndex(index: Record<IndexKey, number>, threshold: n
   const vp = Math.abs(index.VCI - index.PRI);
   const wp = Math.abs(index.WMI - index.PSI);
   const base = {
-    spread, vp, wp, max, min, threshold,
+    spread, vp, wp, max, min, threshold, cpiUnitary: wp < threshold,
     maxKeys: INDEXES.filter((k) => index[k] === max),
     minKeys: INDEXES.filter((k) => index[k] === min),
   };
   if (spread < threshold) return { ...base, type: 'FSIQ', reason: 'unitary' };
   if (vp < threshold) return { ...base, type: 'GAI', reason: 'fsiqNotUnitary' };
-  if (wp < threshold) return { ...base, type: 'CPI', reason: 'gaiNotUnitary' };
-  return { ...base, type: 'NONE', reason: 'noUnitary' };
+  if (allowCpiSummary && wp < threshold) return { ...base, type: 'CPI', reason: 'gaiNotUnitary' };
+  return { ...base, type: 'NONE', reason: wp < threshold ? 'gaiNotUnitary' : 'noUnitary' };
 }
 
 export interface Band {
@@ -114,7 +117,12 @@ export function formatPercentile(p: number | null, lang: Lang = 'en'): string {
 export type ScoreInput = Partial<Record<IndexKey | CompositeKey, RawValue>>;
 
 /** Full analysis of one assessment. */
-export function analyzeScores(input: ScoreInput, threshold: number = DEFAULT_THRESHOLD): Analysis {
+export interface AnalysisOptions {
+  /** Reproduce the pre-0.4.0 rule in which the CPI replaces FSIQ/GAI (retrospective comparison only). */
+  allowCpiSummary?: boolean;
+}
+
+export function analyzeScores(input: ScoreInput, threshold: number = DEFAULT_THRESHOLD, options: AnalysisOptions = {}): Analysis {
   const scores = {} as Scores;
   const errors: ScoreErrors = {};
   for (const k of INDEXES) {
@@ -127,11 +135,12 @@ export function analyzeScores(input: ScoreInput, threshold: number = DEFAULT_THR
     const e = scoreError(scores[k], false);
     if (e) errors[k] = e;
   }
-  const blocking = INDEXES.some((k) => errors[k] !== undefined && errors[k] !== 'notInteger');
+  // Since 0.4.0 a non-integer index also blocks: published index scores are whole numbers.
+  const blocking = INDEXES.some((k) => errors[k] !== undefined);
   if (blocking) return { complete: false, scores, errors };
 
   const index = { VCI: scores.VCI as number, PRI: scores.PRI as number, WMI: scores.WMI as number, PSI: scores.PSI as number };
-  const selection = selectSummaryIndex(index, threshold);
+  const selection = selectSummaryIndex(index, threshold, options.allowCpiSummary === true);
   const type = selection.type;
   const summaryValue = type !== 'NONE' && !errors[type] ? scores[type] : null;
   const missing = type !== 'NONE' && errors[type] === undefined && scores[type] === null;
@@ -147,6 +156,7 @@ export function analyzeScores(input: ScoreInput, threshold: number = DEFAULT_THR
   const cautions: Caution[] = [];
   if (type === 'CPI') cautions.push('cpiCaution');
   if (type === 'NONE') cautions.push('noSummary');
+  if (type === 'NONE' && selection.cpiUnitary) cautions.push('cpiSupplementary');
   if (summaryValue !== null && summaryValue < 70) cautions.push('adaptiveBehaviour');
 
   return {

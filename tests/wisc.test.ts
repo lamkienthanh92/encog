@@ -2,11 +2,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { analyzeScores, approxPercentile, classify, formatPercentile, scoreError, selectSummaryIndex, toScore } from '../src/core/wisc';
 
-const sel = (VCI: number, PRI: number, WMI: number, PSI: number, t?: number) => selectSummaryIndex({ VCI, PRI, WMI, PSI }, t).type;
+const sel = (VCI: number, PRI: number, WMI: number, PSI: number, t?: number, cpi = false) => selectSummaryIndex({ VCI, PRI, WMI, PSI }, t, cpi).type;
 
 test('spread of 22 keeps FSIQ interpretable', () => assert.equal(sel(90, 100, 85, 107), 'FSIQ'));
 test('spread of 23 with VCI–PRI < 23 moves to GAI', () => assert.equal(sel(90, 100, 84, 107), 'GAI'));
-test('VCI–PRI ≥ 23 and WMI–PSI < 23 moves to CPI', () => assert.equal(sel(70, 95, 88, 92), 'CPI'));
+test('VCI–PRI ≥ 23 and WMI–PSI < 23 gives NONE by default (CPI is not a summary since 0.4.0)', () => assert.equal(sel(70, 95, 88, 92), 'NONE'));
+test('legacy option reproduces the pre-0.4.0 CPI substitution', () => assert.equal(sel(70, 95, 88, 92, 23, true), 'CPI'));
 test('both pairs discrepant gives NONE', () => assert.equal(sel(60, 90, 60, 95), 'NONE'));
 test('threshold is configurable', () => assert.equal(sel(90, 100, 85, 107, 20), 'GAI'));
 
@@ -44,6 +45,10 @@ test('an impossible index (WMI = 7) blocks the analysis', () => {
   assert.equal(a.errors.WMI, 'outOfRange');
 });
 
+test('a non-integer index blocks the analysis (0.4.0)', () => {
+  assert.equal(analyzeScores({ VCI: 85.5, PRI: 90, WMI: 90, PSI: 90 }).complete, false);
+});
+
 test('analysis uses the entered composite that the rule selects', () => {
   const a = analyzeScores({ VCI: 75, PRI: 88, WMI: 58, PSI: 72, GAI: 79 });
   assert.ok(a.complete);
@@ -63,7 +68,10 @@ test('missing composite is flagged, not invented', () => {
 
 test('cautions for CPI and for a summary below 70', () => {
   const c = analyzeScores({ VCI: 70, PRI: 95, WMI: 88, PSI: 92, CPI: 89 });
-  assert.ok(c.complete && c.cautions.includes('cpiCaution'));
+  assert.ok(c.complete && c.selection.type === 'NONE' && c.summary.value === null);
+  assert.ok(c.complete && c.cautions.includes('noSummary') && c.cautions.includes('cpiSupplementary'));
+  const legacy = analyzeScores({ VCI: 70, PRI: 95, WMI: 88, PSI: 92, CPI: 89 }, 23, { allowCpiSummary: true });
+  assert.ok(legacy.complete && legacy.cautions.includes('cpiCaution') && legacy.summary.value === 89);
   const low = analyzeScores({ VCI: 62, PRI: 66, WMI: 60, PSI: 70, FSIQ: 58 });
   assert.ok(low.complete && low.cautions.includes('adaptiveBehaviour'));
 });

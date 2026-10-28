@@ -27,9 +27,11 @@ export interface Selection {
   maxKeys: IndexKey[];
   minKeys: IndexKey[];
   threshold: number;
+  /** WMI and PSI differ by less than the threshold (CPI could be computed as a supplementary score). */
+  cpiUnitary: boolean;
 }
 
-export type Caution = 'cpiCaution' | 'noSummary' | 'adaptiveBehaviour';
+export type Caution = 'cpiCaution' | 'cpiSupplementary' | 'noSummary' | 'adaptiveBehaviour';
 
 export interface SummaryResult {
   type: SummaryType;

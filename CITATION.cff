@@ -3,15 +3,11 @@ message: "Nếu dùng ENCOG, vui lòng trích dẫn như dưới đây. If you u
 title: "ENCOG: a support tool for interpreting and following WISC-IV index scores in children after encephalitis"
 type: software
 authors:
-  - family-names: "Vương"
-    given-names: "Hà Bảo Châu"
-    affiliation: "Đại học Y Dược Thành phố Hồ Chí Minh"
-    # orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO: thêm ORCID nếu có
-version: "0.3.0"
-date-released: "2026-10-13"
+  - family-names: "Nguyen"
+    given-names: "Thanh Dan"
+version: "0.4.0"
+date-released: "2026-10-28"
 license: MIT
-repository-code: "https://github.com/YOUR-GITHUB-USERNAME/encog"   # TODO: sửa thành địa chỉ thật
-url: "https://YOUR-GITHUB-USERNAME.github.io/encog/"               # TODO
 keywords:
   - encephalitis
   - children
@@ -23,7 +19,7 @@ abstract: >-
   ENCOG is a bilingual (Vietnamese/English) web application that helps clinicians
   and researchers interpret WISC-IV index scores obtained by trained examiners in
   children after encephalitis. It applies the 23-point discrepancy rule to choose a
-  representative summary index (FSIQ, GAI or CPI), visualises the four-index profile,
+  representative summary index (FSIQ or GAI; otherwise the four-index profile, with the CPI only as a supplementary score), visualises the four-index profile,
   checks follow-up timing, produces family, school and clinical reports, and
   summarises study cohorts with data checks and charts, including the effect of
   assessment timing and Firth logistic regression for factors associated with a

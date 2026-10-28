@@ -1,5 +1,14 @@
 # Nhật ký phiên bản / Changelog
 
+## 0.4.0 – 2026-10-28
+
+Sửa theo nhận xét phản biện / Changes after peer review:
+- **CPI không còn thay thế FSIQ/GAI.** Khi cả FSIQ và GAI không đại diện, ENCOG diễn giải hồ sơ bốn chỉ số; CPI (nếu WMI–PSI < 23) chỉ là điểm bổ sung kèm cảnh báo `cpiSupplementary`. Tùy chọn `allowCpiSummary` tái lập quy tắc cũ để so sánh hồi cứu.
+  *The CPI no longer substitutes for FSIQ/GAI; when neither is representative the four-index profile is interpreted and the CPI is shown only as a supplementary score. `allowCpiSummary` reproduces the earlier rule for retrospective comparison.*
+- **Chỉ số không nguyên bị chặn** (trước đây chỉ cảnh báo). *Non-integer index scores now block the analysis.*
+- **Khoảng cách tối thiểu giữa hai lần test tăng từ 6 lên 12 tháng**; mốc 18 tháng được ghi rõ là mặc định tại chỗ, không phải lịch tối ưu. *Minimum re-test gap raised from 6 to 12 months; the 18-month visit is labelled a configurable local default, not an optimal schedule.*
+- Bộ kiểm chứng độc lập `tests/verification.test.ts` (lưới 2,8 triệu hồ sơ, mọi giá trị biên 22/23, 1 triệu hồ sơ ngẫu nhiên, input sai, ngày tái khám). *Independent verification suite added.*
+
 ## 0.3.0 – 2026-10-13
 
 Phát triển theo kết quả bài báo pha 1 (32 trẻ, Pediatric Neurology – đang gửi): trẻ có chỉ số tổng < 70 được đánh giá sớm hơn, và thời điểm đánh giá làm nhiễu các mối liên quan.

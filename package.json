@@ -1,11 +1,11 @@
 {
   "name": "encog",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "ENCOG – support tool for interpreting and following WISC-IV index scores in children after encephalitis. Bilingual (Vietnamese/English), React + TypeScript, runs entirely in the browser.",
   "private": true,
   "type": "module",
   "license": "MIT",
-  "author": "Vương Hà Bảo Châu",
+  "author": "Nguyen Thanh Dan",
   "keywords": ["encephalitis", "children", "WISC-IV", "follow-up", "react", "typescript"],
   "engines": {
     "node": ">=20"

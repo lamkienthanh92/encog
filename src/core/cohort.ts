@@ -75,7 +75,7 @@ function numericLikeColumns(parsed: ParsedCsv, groupColumns: readonly GroupColum
   }).map((c) => ({ key: c.key, header: c.header, known: false }));
 }
 
-export function buildRecords(parsed: ParsedCsv, threshold: number = DEFAULT_THRESHOLD): BuildResult {
+export function buildRecords(parsed: ParsedCsv, threshold: number = DEFAULT_THRESHOLD, allowCpiSummary = false): BuildResult {
   const mapped = mapHeaders(parsed.headers);
   const { mapping, missingRequired } = mapped;
   const numericColumns = [...mapped.numericColumns, ...numericLikeColumns(parsed, mapped.groupColumns)];
@@ -90,11 +90,11 @@ export function buildRecords(parsed: ParsedCsv, threshold: number = DEFAULT_THRE
 
     const input: Partial<Record<IndexKey | 'FSIQ' | 'GAI' | 'CPI', string>> = {};
     for (const k of [...INDEXES, ...COMPOSITES]) input[k] = get(k);
-    const analysis = analyzeScores(input, threshold);
+    const analysis = analyzeScores(input, threshold, { allowCpiSummary });
     for (const [k, code] of Object.entries(analysis.errors)) {
       const required = (INDEXES as readonly string[]).includes(k);
       if (!code || (code === 'missing' && !required)) continue;
-      issues.push({ level: code === 'notInteger' ? 'warning' : 'error', code, field: k, params: { value: input[k as IndexKey] ?? '' } });
+      issues.push({ level: code === 'notInteger' && !required ? 'warning' : 'error', code, field: k, params: { value: input[k as IndexKey] ?? '' } });
     }
     const dates = { birth: get('birth_date'), discharge: get('discharge_date'), assessment: get('assessment_date') };
     const timing = timingChecks(dates, analysis);

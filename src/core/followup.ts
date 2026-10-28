@@ -6,10 +6,15 @@ export const MIN_FOLLOWUP_MONTHS = 6;
 export const WISC_MIN_AGE_MONTHS = 72; // 6:0
 export const WISC_MAX_AGE_MONTHS = 203; // 16:11
 export const RECHECK_AFTER_MONTHS = 12;
-/** Fixed follow-up anchor: re-assessment about 18 months after discharge (schedule of 6 and 18 months). */
+/**
+ * Default local follow-up anchor (configurable, not an evidence-based optimum): a visit about 18 months
+ * after discharge. It follows the department's planned schedule; the optimal timing of repeat testing
+ * after encephalitis has not been established.
+ */
 export const RECHECK_AT_MONTHS_AFTER_DISCHARGE = 18;
-/** Minimum gap between two WISC-IV administrations (practice effects). */
-export const MIN_RETEST_GAP_MONTHS = 6;
+/** Minimum gap between two WISC-IV administrations. Raised from 6 to 12 months in 0.4.0 because practice
+ * effects on Wechsler scales are substantial at shorter intervals (Calamia et al. 2012). */
+export const MIN_RETEST_GAP_MONTHS = 12;
 
 export const isValidDate = (d: unknown): d is Date => d instanceof Date && !Number.isNaN(d.getTime());
 

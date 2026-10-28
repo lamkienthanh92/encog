@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/YOUR-GITHUB-USERNAME/encog/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR-GITHUB-USERNAME/encog/actions/workflows/ci.yml)
 <!-- Sau khi Zenodo cấp DOI, thay dòng dưới bằng badge DOI thật -->
-DOI: *được cấp khi phát hành trên Zenodo*
+DOI 0.3.0: [10.5281/zenodo.23329825](https://doi.org/10.5281/zenodo.23329825). DOI 0.4.0: xem bản phát hành v0.4.0 trên Zenodo.
 
 Dùng trực tuyến / Use online: `https://YOUR-GITHUB-USERNAME.github.io/encog/`
 
@@ -19,7 +19,7 @@ Dùng trực tuyến / Use online: `https://YOUR-GITHUB-USERNAME.github.io/encog
 
 **Một trẻ**
 - Nhập 4 chỉ số (VCI, PRI, WMI, PSI) và chỉ số tổng trên phiếu kết quả (FSIQ, GAI, CPI nếu có).
-- Áp quy tắc chênh lệch 23 điểm để cho biết nên dùng FSIQ, GAI, CPI hay không dùng chỉ số tổng.
+- Áp quy tắc chênh lệch 23 điểm để cho biết nên dùng FSIQ, GAI hay diễn giải hồ sơ 4 chỉ số (từ 0.4.0, CPI chỉ là điểm bổ sung, không thay thế FSIQ/GAI).
 - Vẽ "thước điểm chuẩn": vị trí 4 chỉ số, khoảng chênh và ngưỡng.
 - Chỉ ra lĩnh vực cần hỗ trợ kèm gợi ý cho gia đình, nhà trường.
 - Kiểm tra thời điểm (≥ 6 tháng sau xuất viện, tuổi 6:0–16:11) và đề xuất ngày đánh giá lại.
@@ -78,23 +78,25 @@ Cần Node.js ≥ 20.
 npm install
 npm run dev          # mở http://localhost:5173
 npm run typecheck    # kiểm tra kiểu TypeScript
-npm test             # 55 bài kiểm thử
+npm test             # 66 bài kiểm thử (gồm bộ kiểm chứng độc lập tests/verification.test.ts)
 npm run build        # kiểm tra kiểu rồi tạo thư mục dist/
 ```
 
-### Đưa lên GitHub và Zenodo (lần đầu)
+### Đưa lên GitHub và Zenodo
 
-1. Tạo kho mã công khai tên `encog` trên GitHub, rồi đẩy mã lên:
+1. Tạo kho mã công khai tên `encog` trên GitHub (hoặc dùng kho đã có), rồi đẩy mã lên:
    ```bash
-   git init && git add . && git commit -m "ENCOG 0.1.0"
+   git init && git add . && git commit -m "ENCOG 0.4.0"
    git branch -M main
    git remote add origin https://github.com/YOUR-GITHUB-USERNAME/encog.git
    git push -u origin main
    ```
-2. Bật GitHub Pages: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Lần đẩy mã tiếp theo, workflow `deploy.yml` sẽ build và đưa app lên `https://YOUR-GITHUB-USERNAME.github.io/encog/`.
-3. Kết nối Zenodo: đăng nhập [zenodo.org](https://zenodo.org) bằng tài khoản GitHub, vào **GitHub** trong menu tài khoản, bật công tắc cho kho `encog`.
-4. Tạo bản phát hành trên GitHub: **Releases → Draft a new release → tag `v0.1.0`**. Zenodo tự lưu trữ bản này và cấp DOI (đọc thông tin từ `.zenodo.json`).
-5. Thay `YOUR-GITHUB-USERNAME` trong `README.md` và `CITATION.cff`, thêm badge DOI và ORCID (nếu có), rồi đẩy lại.
+   Nếu kho đã có sẵn: chép đè các file này vào kho, rồi `git add -A && git commit -m "ENCOG 0.4.0" && git push`.
+2. Bật GitHub Pages: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Workflow `ci.yml` chạy kiểm tra kiểu và 66 bài kiểm thử; `deploy.yml` build và đưa app lên `https://YOUR-GITHUB-USERNAME.github.io/encog/`.
+3. Kết nối Zenodo: đăng nhập [zenodo.org](https://zenodo.org), vào **GitHub** trong menu tài khoản, bật công tắc cho kho `encog` (làm **trước** khi tạo bản phát hành).
+4. Tạo bản phát hành trên GitHub: **Releases → Draft a new release → tag `v0.4.0`**, tiêu đề `ENCOG 0.4.0`, dán mục 0.4.0 trong `CHANGELOG.md`. Zenodo tự lưu trữ và cấp DOI, đọc thông tin từ `.zenodo.json`.
+5. Lưu ý: bản 0.3.0 (DOI 10.5281/zenodo.23329825) được tải lên Zenodo bằng tay, nên bản phát hành từ GitHub sẽ là một bản ghi Zenodo mới; `.zenodo.json` đã khai báo quan hệ *isNewVersionOf* tới DOI 0.3.0. Muốn giữ chung một bản ghi (cùng "concept DOI") thì thay vì bước 3–4, vào bản ghi 0.3.0 → **New version** → tải lên file zip của bản phát hành.
+6. Thay `YOUR-GITHUB-USERNAME` trong `README.md`, thêm badge DOI, rồi đẩy lại.
 
 ### Tài liệu
 
@@ -105,7 +107,7 @@ npm run build        # kiểm tra kiểu rồi tạo thư mục dist/
 
 ### Bài báo liên quan
 
-Vương HBC, Phùng NTN, Đặng QD, et al. *Intellectual functioning after encephalitis requiring intensive care in Vietnamese children: a WISC-IV follow-up study.* Bản thảo gửi Pediatric Neurology, 2026. ENCOG 0.3.0 cài đặt các phân tích của bài (chỉ số tổng theo quy tắc 23 điểm, thời điểm đánh giá, hồi quy Firth hiệu chỉnh theo thời gian đánh giá).
+Vương HBC, Phùng NTN, Đặng QD, et al. *Intellectual functioning after encephalitis requiring intensive care in Vietnamese children: a WISC-IV follow-up study.* Bản thảo gửi Pediatric Neurology, 2026. ENCOG 0.3.0 cài đặt các phân tích của bài (chỉ số tổng theo quy tắc 23 điểm, thời điểm đánh giá, hồi quy Firth hiệu chỉnh theo thời gian đánh giá). ENCOG 0.4.0 sửa quy tắc CPI và lịch đánh giá lại theo nhận xét phản biện.
 
 ### Trích dẫn
 
@@ -117,7 +119,7 @@ Xem [`CITATION.cff`](CITATION.cff) hoặc nút "Cite this repository" trên GitH
 
 ### What ENCOG does
 
-**One child:** enter the four WISC-IV indexes and any summary index from the score report; ENCOG applies the 23-point discrepancy rule (FSIQ → GAI → CPI → none), draws the four indexes on the standard-score scale, lists areas needing support with classroom and home suggestions, checks timing (≥ 6 months after discharge, age 6:0–16:11), proposes a re-assessment date, and prints family, school (no scores) and clinical reports.
+**One child:** enter the four WISC-IV indexes and any summary index from the score report; ENCOG applies the 23-point discrepancy rule (FSIQ → GAI → four-index profile; since 0.4.0 the CPI is only a supplementary score), draws the four indexes on the standard-score scale, lists areas needing support with classroom and home suggestions, checks timing (≥ 6 months after discharge, age 6:0–16:11), proposes a re-assessment date, and prints family, school (no scores) and clinical reports.
 
 **Study cohort:** upload a CSV (Vietnamese or English headers); ENCOG checks the data, then summarises the cohort with cards and charts (distribution, bands, four-index profile, lowest index, summary-index type, proportion below 70 by group with Wilson CIs and Fisher's test, trajectories, Liverpool Outcome Score, FSIQ and excluding-CPI sensitivity analyses, assessment timing vs summary index, Firth logistic regression for factors associated with a summary index < 70 before and after adjustment for assessment timing, index profiles by group) and exports derived variables for Stata/R/SPSS. A synthetic 60-child dataset is built in.
 
@@ -125,7 +127,7 @@ Xem [`CITATION.cff`](CITATION.cff) hoặc nút "Cite this repository" trên GitH
 
 **Stack:** React 18 + strict TypeScript + Vite; hand-written responsive SVG charts with tooltips. **Run locally:** `npm install`, `npm run dev`, `npm run typecheck`, `npm test`, `npm run build` (Node.js ≥ 20).
 
-**Release:** push to GitHub, enable Pages with GitHub Actions, connect the repository in Zenodo, publish release `v0.1.0` to mint a DOI. See the Vietnamese steps above.
+**Release:** push to GitHub, enable Pages with GitHub Actions, connect the repository in Zenodo, then publish release `v0.4.0` to mint a DOI (metadata from `.zenodo.json`, declared as a new version of 10.5281/zenodo.23329825). Alternatively, upload the release zip as a *New version* of the 0.3.0 Zenodo record to keep a single concept DOI. See the Vietnamese steps above.
 
 ## Giấy phép / License
 

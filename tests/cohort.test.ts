@@ -28,8 +28,15 @@ test('row-level issues', () => {
   assert.ok(byLine.get(7)?.issues.some((i) => i.code === 'losRange'));
 });
 
-test('summary uses the first assessment of each child', () => {
-  const { records, groupColumns } = buildRecords(parseCSV(CSV));
+test('default 0.4.0 rule: the CPI child has no single summary index', () => {
+  const s = summarize(buildRecords(parseCSV(CSV)).records, 'nhom');
+  assert.equal(s.withSummary, 2);
+  assert.equal(s.typeCounts.CPI, 0);
+  assert.equal(s.typeCounts.NONE, 1);
+});
+
+test('summary uses the first assessment of each child (legacy CPI rule)', () => {
+  const { records, groupColumns } = buildRecords(parseCSV(CSV), 23, true);
   const s = summarize(records, 'nhom');
   assert.equal(s.children, 3);
   assert.equal(s.withSummary, 3);
@@ -95,8 +102,8 @@ test('numeric clinical columns are recognised, validated and exported', () => {
   assert.ok(headers.includes('n_seizures') && headers.includes('residence'));
 });
 
-test('timing summary, CPI sensitivity and group profiles', () => {
-  const b = buildRecords(parseCSV(CLIN));
+test('timing summary, CPI sensitivity and group profiles (legacy CPI rule)', () => {
+  const b = buildRecords(parseCSV(CLIN), 23, true);
   const s = summarize(b.records, 'residence');
   assert.ok(s.timing);
   assert.equal(s.timing.points.length, 10);

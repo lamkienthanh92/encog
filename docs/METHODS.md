@@ -14,12 +14,11 @@ Với ngưỡng *T* (mặc định 23 điểm = 1,5 độ lệch chuẩn):
 |---|---|
 | max(4 chỉ số) − min(4 chỉ số) < *T* | FSIQ |
 | ngược lại, và \|VCI − PRI\| < *T* | GAI |
-| ngược lại, và \|WMI − PSI\| < *T* | CPI |
-| ngược lại | Không có chỉ số tổng đại diện; diễn giải từng chỉ số |
+| ngược lại | Không dùng chỉ số tổng; diễn giải hồ sơ 4 chỉ số (CPI là điểm bổ sung nếu \|WMI − PSI\| < *T*) — từ 0.4.0 |
 
 Nguồn: Flanagan & Kaufman (2009); Weiss và cs. (2006); Raiford và cs. (2005). Ngưỡng có thể chỉnh trong giao diện (10–40).
 
-**Lưu ý về CPI.** CPI phản ánh trí nhớ công việc và tốc độ xử lý, không phải năng lực suy luận chung. ENCOG luôn hiện cảnh báo khi quy tắc chọn CPI và khuyến nghị trình bày hồ sơ 4 chỉ số.
+**Lưu ý về CPI.** CPI phản ánh trí nhớ công việc và tốc độ xử lý, không phải năng lực suy luận chung. Từ 0.4.0, ENCOG không dùng CPI thay cho FSIQ/GAI; khi WMI và PSI đồng đều, CPI chỉ được hiện như điểm bổ sung kèm cảnh báo. Tùy chọn `allowCpiSummary` (chỉ trong mã, không có trên giao diện) tái lập quy tắc cũ (0.3.0) để so sánh hồi cứu với thực hành tại khoa.
 
 ## 3. Mức phân loại / Bands
 
@@ -44,7 +43,7 @@ Một chỉ số được xem là lĩnh vực cần hỗ trợ khi < 80 **hoặc
 - 1 tháng = 30,4375 ngày.
 - Cảnh báo khi ngày đánh giá sớm hơn mốc 6 tháng lịch sau xuất viện.
 - Cảnh báo khi tuổi lúc đánh giá ngoài 6 tuổi 0 tháng – 16 tuổi 11 tháng (khoảng áp dụng WISC-IV).
-- Khi chỉ số tổng < 80, hồ sơ không đồng đều hoặc có chỉ số < 70: đề xuất đánh giá lại theo **lịch cố định 18 tháng sau xuất viện**, nếu mốc này cách lần đánh giá hiện tại ít nhất 6 tháng (hiệu ứng luyện tập); nếu không, đề xuất 12 tháng sau lần đánh giá hiện tại. Lịch cố định (6 và 18 tháng) giúp so sánh các trẻ ở cùng thời điểm hồi phục.
+- Khi chỉ số tổng < 80, hồ sơ không đồng đều hoặc có chỉ số < 70: đề xuất đánh giá lại ở **mốc mặc định 18 tháng sau xuất viện**, nếu mốc này cách lần đánh giá hiện tại ít nhất 12 tháng (hạn chế hiệu ứng làm quen; Calamia và cs. 2012); nếu không, đề xuất 12 tháng sau lần đánh giá hiện tại. Đây là mặc định theo kế hoạch theo dõi tại chỗ, **không phải lịch tối ưu đã được chứng minh**; thời điểm đánh giá lại tối ưu sau viêm não chưa được xác lập.
 
 ## 6. Thống kê nhóm / Cohort statistics
 
